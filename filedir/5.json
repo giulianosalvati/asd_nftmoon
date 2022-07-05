@@ -1,0 +1,8 @@
+{
+    "id": 5,
+    "name": "SCORE3",
+    "description": "Lorem ipsum...",
+    "image": "https:\/\/s3.amazonaws.com\/your-bucket\/images\/{id}.png",
+    "value": [1,2,3,4,5],
+    "score": 3
+}
