@@ -1,7 +1,7 @@
 __pycache__
 .history
 .hypothesis/
-build/
+.build/
 reports/
 .env
 .DS_Store
