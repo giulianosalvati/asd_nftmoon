@@ -21,9 +21,9 @@ def check_deployedERC721():
 
 def main():
     contract = check_deployedERC721()
-    contract.createDice("Dice1", {"from": banco})
-    contract.createDice("Dice2", {"from": banco})
-    contract.createDice("Dice3", {"from": banco})
-    contract.createDice("Dice4", {"from": banco})
+    contract._createDice("Dice1", {"from": banco})
+    contract._createDice("Dice2", {"from": banco})
+    contract._createDice("Dice3", {"from": banco})
+    contract._createDice("Dice4", {"from": banco})
     print(contract.getDices())
     print(contract.getOwnerDices(banco))
