@@ -3,17 +3,13 @@ import argparse
 def initialize_parser():
     
     parser = argparse.ArgumentParser()
-    parser.add_argument("-a", "--playadd",
-                        help="Player Address",
+    # parser.add_argument("-a", "--playadd",
+    #                     help="Player Address",
+    #                     required=False,
+    #                     type=str)
+    parser.add_argument("-p", "--players ",
+                        help="Number of playing players",
                         required=True,
-                        type=str)
-    parser.add_argument("-20", "--erc20add ",
-                        help="ERC20 Contract Address",
-                        required=True,
-                        type=str)
-    parser.add_argument("-721", "--erc721 ",
-                        help=" ERC721 Contract Address",
-                        required=True,
-                        type=str)
+                        type=int)
 
     return parser.parse_args()
