@@ -3,8 +3,9 @@ pragma solidity ^0.8.7;
 
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 
-contract DiceNFT is ERC721, Ownable {
+contract DiceNFT is ERC721URIStorage, Ownable {
     uint256 COUNTER;
 
     constructor() ERC721("DiceNFT", "DNFT") {
@@ -15,20 +16,25 @@ contract DiceNFT is ERC721, Ownable {
     struct Dice {
         string name;
         uint256 id;
+        string uri;
     }
 
     //array dove vengono salvati gli nft creati
     Dice[] public Dices;
 
     //Mi serve gestire l'evento che la funzione emit del mint lancia(come transazione)
-    event NewDice(address indexed owner, uint256 id);
+    event NewDice(address indexed owner, uint256 id, string uri);
 
     //Creation of the NFT
-    function _createDice(string memory _name) public returns (uint256) {
-        Dice memory newDice = Dice(_name, COUNTER);
+    function createDice(string memory _name, string calldata _uri)
+        public
+        returns (uint256)
+    {
+        Dice memory newDice = Dice(_name, COUNTER, _uri);
         Dices.push(newDice);
         _safeMint(msg.sender, COUNTER);
-        emit NewDice(msg.sender, COUNTER);
+        _setTokenURI(COUNTER, _uri);
+        emit NewDice(msg.sender, COUNTER, _uri);
         COUNTER++;
         return COUNTER - 1;
     }

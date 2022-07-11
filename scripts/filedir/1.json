@@ -1,0 +1,15 @@
+{
+    "id": 1,
+    "name": "CUBEx2",
+    "description": "Scorex2",
+    "image": "http://localhost:8080/ipfs/QmbGdSt4WhNPMS3SiaCVbapTdKqCJmkzSecmsGC6YvW4Gb",
+    "cube": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+    ],
+    "punteggio": 2
+}
