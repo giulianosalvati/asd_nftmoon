@@ -24,14 +24,13 @@ def check_deployedERC721():
 
 
 def chose_uri(choice, ipfs_uri):
-    match choice:
-        case 1:
+    if (choice==1):
             return ipfs_uri["1"]
-        case 2:
+    if (choice==2):
             return ipfs_uri["2"]
-        case 3:
+    if (choice==3):
             return ipfs_uri["3"]
-        case 4:
+    if (choice==4):
             return ipfs_uri["4"]
 
 
@@ -45,18 +44,18 @@ def main():
     ipfs_uri = json.load(f)
     f.close()
 
-    """ choice = random.randint(1, 4)
+    choice = random.randint(1, 4)
     cid = chose_uri(choice, ipfs_uri)
     print(cid)
     contract.createDice("Ciao", base_URI + cid, {"from": banco})
     print(base_URI + cid)
-    print(f"\n\n\n{contract.tokenURI(25)}")
+    print(f"\n\n\n{contract.tokenURI(6)}")
     choice = random.randint(1, 4)
     print(cid)
     contract.createDice("Bello", base_URI + cid, {"from": banco})
-    print(f"\n\n\n{contract.tokenURI(26)}") """
-    print(contract.tokenURI(0))
-    with urllib.request.urlopen(contract.tokenURI(0)) as url:
+    print(f"\n\n\n{contract.tokenURI(7)}")
+    print(contract.tokenURI(7))
+    with urllib.request.urlopen(contract.tokenURI(6)) as url:
         data = json.loads(url.read())
         print(data["value"])
     # print(contract.getDices())
