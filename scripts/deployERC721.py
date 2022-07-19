@@ -55,8 +55,8 @@ def main():
     print(cid)
     contract.createDice("Bello", base_URI + cid, {"from": banco})
     print(f"\n\n\n{contract.tokenURI(26)}") """
-
-    with urllib.request.urlopen(contract.tokenURI(26)) as url:
+    print(contract.tokenURI(0))
+    with urllib.request.urlopen(contract.tokenURI(0)) as url:
         data = json.loads(url.read())
         print(data["value"])
     # print(contract.getDices())
