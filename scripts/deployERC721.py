@@ -2,10 +2,11 @@ from brownie import Contract, DiceNFT, accounts
 from web3 import Web3
 import json
 import random
-
+# import urllib.request
+import requests
 
 banco = accounts[0]
-base_URI = "http://localhost:8080/ipfs/"
+base_URI = "https://ipfs.dweb.link/"
 
 
 def deploy_contract():
@@ -23,39 +24,54 @@ def check_deployedERC721():
 
 
 def chose_uri(choice, ipfs_uri):
-    match choice:
-        case 1:
+    if (choice==1):
             return ipfs_uri["1"]
-        case 2:
+    if (choice==2):   
             return ipfs_uri["2"]
-        case 3:
+    if (choice==3):
             return ipfs_uri["3"]
-        case 4:
+    if (choice==4):
             return ipfs_uri["4"]
-        case 5:
+    if (choice==5):
             return ipfs_uri["5"]
 
 
 def main():
     contract = check_deployedERC721()
 
-    # TODO: rendere questo indipendente dall'ambiente locale
-    path = "C:/Users/massi/OneDrive/Desktop/Campus/Architetture di Sistemi Distribuiti/NFT/asd_nftmoon/scripts/filedir/indices.json"
+
+    # # TODO: rendere questo indipendente dall'ambiente locale
+    path = "./scripts/filedir/indices.json"
 
     f = open(path, "r")
     ipfs_uri = json.load(f)
     f.close()
-
+    
     choice = random.randint(1, 5)
-    ipfs = chose_uri(choice, ipfs_uri)
-    print(ipfs)
-    contract.createDice("Dice1", base_URI + ipfs, {"from": banco})
-    print(contract.tokenURI(0))
-    choice = random.randint(1, 5)
-    print(ipfs)
-    contract.createDice("Dice1", base_URI + ipfs, {"from": banco})
+    cid = chose_uri(choice, ipfs_uri)
+    print(cid)
+    
+    token_uri= f"https://{cid}.ipfs.dweb.link/"
+    print(token_uri)
+    contract.createDice("Ciao",token_uri, {"from": banco})
 
-    # print(contract.getDices())
-    # print(contract.getOwnerDices(banco))
+    # choice = random.randint(1, 4)
+    # print(cid)
+    # contract.createDice("Bello", base_URI + cid, {"from": banco})
+    # print(contract.tokenURI(0))
+    
+    response= requests.get(token_uri)
+    metadata_uri= response.json() # file json
+    print(metadata_uri['image'])
 
-    print(contract.tokenURI(1))
+
+    # with urllib.request.urlopen(contract.tokenURI(6)) as url:
+    #     data = json.loads(url.read())
+    #     print(data["value"])
+   
+   
+   
+    # # print(contract.getDices())
+    # # print(contract.getOwnerDices(banco))
+
+    # # print(contract.tokenURI(25))

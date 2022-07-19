@@ -1,8 +1,0 @@
-{
-    "id": 2,
-    "name": "MAX_CUBE",
-    "description": " Entire 6 cube",
-    "image": "",
-    "cube": [6,6,6,6,6,6],
-    "score": 1
-}
