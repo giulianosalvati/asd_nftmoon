@@ -1,8 +1,0 @@
-{
-    "id": 3,
-    "name": "Four4",
-    "description": "First three faces with 4",
-    "image": "",
-    "cube": [4,4,4,4,5,6],
-    "score":1
-}
