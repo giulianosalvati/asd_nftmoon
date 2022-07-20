@@ -1,4 +1,5 @@
 import random
+from unittest import result
 
 class Player:
         
@@ -20,6 +21,17 @@ class Player:
 
     def extraction(self):
         return random.choice(self.dice)
+
+    def Check_NFT(self, contract):
+      if contract.balanceOf(self.address) >=1:
+        self.NFT==True
+        result = contract.getDices(self.address)[0][1]
+        return result
+
+      else:
+        pass
+
+     
 
     
     
