@@ -33,6 +33,32 @@ def chose_uri(choice, ipfs_uri):
     if (choice==4):
             return ipfs_uri["4"]
 
+def buy(token, contract, players):
+    buy_players=[]
+    for p in players:
+        #faccio check sui token, ne deve avere almeno 500
+        if token.balanceOf(p.address) >= 500:
+            buy_players.append(p)
+
+    for p in buy_players:
+        condition = False
+        while not condition:
+            response = input(f'player{p.id}:vuoi comprare un NFT? y/n ')
+            if response == 'y':
+                listDices=contract.getOwnerDices(banco)
+                listNFT=[]
+                for j in listDices:
+                    listNFT.append(listDices[j][1])
+                choice = input(f'player{p.id}: quale NFT vuoi comprare tra i disponibili?{listNFT}')
+                token.transfer(banco, 500, {"from": p.address})
+                contract.transferFrom(banco, p.address, choice, {"from": banco})
+                #print(contract.getOwnerDices(p.address))
+                condition = True
+            elif response == 'n':
+                print('ok prossimo giocatore')
+                condition = True
+            else:
+                print('devi specificare y/n')
 
 def main():
     contract = check_deployedERC721()
