@@ -7,17 +7,15 @@ from scripts import game
 
 banco = accounts[0]
 n_players = int(input("players:"))
-players = []
 
 
 def main():
 
     token = deployERC20.check_deployedERC20()
+    chain_rank = list(token.getRank())
 
-    for i in range(n_players):
-        players.append(Player.Player(accounts[i + 1], i + 1))
-        print(players[i].id)
+    players = game.game_Set_Up(token, chain_rank, n_players)
 
-    # game.initial_transaction(players,token)
-    play_players = game.check_token(players, token)
-    game.play(play_players, token, n_players)
+    game_players = game.pay_table(players, token)
+
+    game.play(game_players, token, chain_rank)
