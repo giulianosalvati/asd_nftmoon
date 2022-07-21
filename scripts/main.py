@@ -1,8 +1,6 @@
 from brownie import Contract, accounts
 from web3 import Web3
-import random
 from scripts import deployERC20, deployERC721
-from scripts import Player
 from scripts import game
 
 banco = accounts[0]

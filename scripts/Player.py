@@ -10,12 +10,14 @@ class Player:
     """
 
     Class Player
-        Attributi della classe:
+        Attributes:
             - address: player's address
             - id: player's game ID
             - NFT: player's NFT collection
             - dice: The dice from which the game will extract
             - points: player's overall score
+            - multi_score: 
+            - game_score: Player's game score
 
     """
 
@@ -30,36 +32,41 @@ class Player:
         self.game_score = 0
 
 
-    # #check if the player is an NFT owner
-    # def Check_NFT(self, contract):
-    #   if contract.balanceOf(self.address) >=1:
-    #     self.NFT==True
-    #     #token URI
-    #     result = contract.getOwnerDices(self.address)[0][2]
-    #     return result
-      
-    #   else:
-    #     pass
-
-    #update normal dices with NFT values     
     def Check_NFT(self, contract):
+      """ 
+      
+      Function do a check on Player NFT balanceOf  
+      Parameter: 
+          - DiceNFT Contract
+
+      """
+
       if contract.balanceOf(self.address) >=1:
         self.NFT==True
-        #token URI
-        uri = contract.getOwnerDices(self.address)[0][2]
-        response=requests.get(uri)
+        token_uri = contract.getOwnerDices(self.address)[0][2]
+        response=requests.get(token_uri)
         metadata_uri=response.json()
-        self.dice=metadata_uri['value']
-        self.multi_score=metadata_uri['score']
-        print('NFT convalidato')
+        self.dice= metadata_uri['value']
+        self.multi_score= metadata_uri['score']
+        print(f' Player{self.id} is playing with an NFT ')
       
       else:
-        print('Player no NFT')
+        print(f"Player{self.id} doesn't have an NFT")
 
 
     def extraction(self,contract):
-        self.Check_NFT(contract)
-        ex = random.choice(self.dice)
-        self.game_score = ex*self.multi_score
-        return ex
-
+      """
+      
+      Player makes his throws
+      
+      Parameter: 
+          - DiceNFT Contract
+      Return:
+          - Player game score
+      
+      """
+      
+      self.Check_NFT(contract)
+      ex = random.choice(self.dice)
+      self.game_score = ex*self.multi_score
+      return self.game_score

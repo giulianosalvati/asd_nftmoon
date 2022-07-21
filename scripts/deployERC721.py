@@ -14,16 +14,20 @@ f.close()
 
 
 def deploy_contract():
-    '''
-    check_deployedERC721 check if there is a DiceNFT yet deployed 
-    else it deploy it so, from the first game run, we've only one DiceNft contract
-    '''
+    """
+    
+     DiceNFT contract deploys
+    
+    """
+
     erc721 = DiceNFT.deploy({"from": banco})
     return erc721
 
 
 def check_deployedERC721():
-    # Check if there is already a deployed contract for the ERC721 token DiceNFT
+    '''
+    Check if there is already a deployed contract for the ERC721 token DiceNFT
+    '''
     if not DiceNFT:
         contract = deploy_contract()
         mint_nftgame(contract)
@@ -32,44 +36,42 @@ def check_deployedERC721():
     return contract
 
 def mint_nftgame(contract):
-    # function that mint nft in storage on ipfs
+    '''
+    Function that mints DiceToken NFTs in storage on Ipfs
+    '''
     for i in range(len(ipfs_uri)):
         id_index = ipfs_uri[f'{i+1}']
-        print(id_index)
         token_uri= f"https://{id_index}.ipfs.dweb.link/"
-        print(f'Your token_uri is: {token_uri}')
+        print(f'Token_uri minted: {token_uri}')
         contract.createDice(f"DiceToken{i+1}",token_uri, {"from": banco})
     
 
 
 def buy(token, contract, players):
+    '''
+    Function that allows to buy NFT ( Only for player with almost 80 DCT and with a balanceOf = 0) at the end of the game.
+    '''
     buy_players=[]
     for p in players:
-        #faccio check sui token, ne deve avere almeno 500
+        # check on DCT balance, it pass with almost 80
         if token.balanceOf(p.address) >= 80 and contract.balanceOf(p.address)< 1:
             buy_players.append(p)
 
     for p in buy_players:
         condition = False
         while not condition:
-            response = input(f'player{p.id}:vuoi comprare un NFT? y/n ')
+            response = input(f'Player{p.id}: Would you like to buy an NFT? y/n ')
             if response == 'y':
                 listDices=contract.getOwnerDices(banco)
                 listNFT=[]
                 for j in range(0,len(listDices)):
                     listNFT.append(listDices[j][1])
-                choice = input(f'player{p.id}: quale NFT vuoi comprare tra i disponibili?{listNFT} ')
+                choice = input(f'player{p.id}: Which available NFT do you want to buy?{listNFT} ')
                 token.transfer(banco, 80, {"from": p.address})
                 contract.transferFrom(banco, p.address, choice, {"from": banco})
-                #print(contract.getOwnerDices(p.address))
                 condition = True
             elif response == 'n':
-                print('ok prossimo giocatore')
+                print('Ok thanks, next Player ')
                 condition = True
             else:
-                print('devi specificare y/n')
-
-
-def main():
-    Contract= check_deployedERC721()
-    print(Contract)
+                print(' You have to specify y/n')
