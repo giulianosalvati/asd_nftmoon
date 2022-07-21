@@ -21,6 +21,7 @@ contract DiceNFT is ERC721URIStorage, Ownable {
 
     //array dove vengono salvati gli nft creati
     Dice[] public Dices;
+    mapping(address => Dice[]) public dices;
 
     //Mi serve gestire l'evento che la funzione emit del mint lancia(come transazione)
     event NewDice(address indexed owner, uint256 id, string uri);
@@ -45,12 +46,14 @@ contract DiceNFT is ERC721URIStorage, Ownable {
     }
 
     //Per prendere solo gli nft dell'owner
-    function getOwnerDices(address _owner) public view returns (Dice[] memory) {
-        Dice[] memory result = new Dice[](balanceOf(_owner));
+    function getOwnerDices(address _user) public view returns (Dice[] memory) {
+        Dice[] memory result = new Dice[](balanceOf(_user));
         uint256 counter = 0;
         for (uint256 i = 0; i < Dices.length; i++) {
-            result[counter] = Dices[i];
-            counter++;
+            if (_user == ownerOf(i)) {
+                result[counter] = Dices[i];
+                counter++;
+            }
         }
         return result;
     }
