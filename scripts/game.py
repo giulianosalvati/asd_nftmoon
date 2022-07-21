@@ -116,8 +116,9 @@ def update_Chain_Ranking(winners, chain_rank, token):
         rank += 1
 
     # Push the updated rank to the blockchain
-    token.setRank(new_rank, {"from": table})
+    token.setRank(final_rank, {"from": table})
     finish = time.time()
+    print(token.getRank())
     print(f"\n\n...Update completed in {finish-start}s")
 
 
