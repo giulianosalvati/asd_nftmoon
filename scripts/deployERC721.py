@@ -39,13 +39,14 @@ def mint_nftgame(contract):
         token_uri= f"https://{id_index}.ipfs.dweb.link/"
         print(f'Your token_uri is: {token_uri}')
         contract.createDice(f"DiceToken{i+1}",token_uri, {"from": banco})
-        
+    
+
 
 def buy(token, contract, players):
     buy_players=[]
     for p in players:
         #faccio check sui token, ne deve avere almeno 500
-        if token.balanceOf(p.address) >= 500:
+        if token.balanceOf(p.address) >= 80 and contract.balanceOf(p.address)< 1:
             buy_players.append(p)
 
     for p in buy_players:
@@ -55,10 +56,10 @@ def buy(token, contract, players):
             if response == 'y':
                 listDices=contract.getOwnerDices(banco)
                 listNFT=[]
-                for j in listDices:
+                for j in range(0,len(listDices)):
                     listNFT.append(listDices[j][1])
-                choice = input(f'player{p.id}: quale NFT vuoi comprare tra i disponibili?{listNFT}')
-                token.transfer(banco, 500, {"from": p.address})
+                choice = input(f'player{p.id}: quale NFT vuoi comprare tra i disponibili?{listNFT} ')
+                token.transfer(banco, 80, {"from": p.address})
                 contract.transferFrom(banco, p.address, choice, {"from": banco})
                 #print(contract.getOwnerDices(p.address))
                 condition = True
@@ -67,3 +68,8 @@ def buy(token, contract, players):
                 condition = True
             else:
                 print('devi specificare y/n')
+
+
+def main():
+    Contract= check_deployedERC721()
+    print(Contract)

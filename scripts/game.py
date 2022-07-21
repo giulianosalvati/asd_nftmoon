@@ -50,12 +50,12 @@ def pay_table(players, token):
 
 
 # For every playing player extract a value from its dice and create a sorted score board with extraction values and related player object
-def create_Game_Rank(game_players):
+def create_Game_Rank(game_players,contract):
     scores = []
     for p in game_players:
-        p_score = [p.extraction(), p]
+        p_score = [p.extraction(contract), p]
         scores.append(p_score)
-        print(f"\nPlayer {p.id} score is: {p.game_score}")
+        print(f"\nPlayer {p.id} game_score is: {p.game_score}")
     scores.sort(key=operator.itemgetter(0), reverse=True)
     return scores
 
@@ -122,9 +122,9 @@ def update_Chain_Ranking(winners, chain_rank, token):
     print(f"\n\n...Update completed in {finish-start}s")
 
 
-def play(game_players, token, chain_rank):
+def play(game_players, token, chain_rank,contract):
 
-    scores = create_Game_Rank(game_players)
+    scores = create_Game_Rank(game_players,contract)
 
     winners = pay_Winners(scores, token)
 
