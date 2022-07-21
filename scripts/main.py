@@ -11,6 +11,7 @@ n_players = int(input("players:"))
 
 def main():
 
+
     token = deployERC20.check_deployedERC20()
     chain_rank = list(token.getRank())
 
