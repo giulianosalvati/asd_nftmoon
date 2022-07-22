@@ -1,15 +1,19 @@
-from brownie import Contract, accounts
-from web3 import Web3
-import random
+from brownie import accounts
 from scripts import Player, Utils
 import operator
 import time
+import os
 
 
 table = accounts[0]
 
 # Welcome bonus for first time users only
 def welcome_bonus(player, token, i):
+    """
+
+    Function that gives the new Players a welcome bonus
+
+    """
     if token.balanceOf(player.address) == 0:
         print(
             f"\nWelcome {player.address}. You get a welcome Bonus of 100 DCT. You can start playing the game. Your ID for the current game is {i+1}\n"
@@ -23,6 +27,11 @@ def welcome_bonus(player, token, i):
 
 # Creates the player list for the game. If the player is new he recives a welcome bonus and gets added to the blockchain
 def game_Set_Up(token, chain_rank, n_players):
+    """
+
+    Function that sets the Game up and creates the list of players
+
+    """
     players = []
     for i in range(n_players):
         address = accounts[i + 1]
@@ -40,28 +49,46 @@ def game_Set_Up(token, chain_rank, n_players):
 
 # Check if players have enough DCT tokens to play and pay table. If not discard them
 def pay_table(players, token):
+    """
+
+    Function that pays the table before starting the game
+
+    """
     print("\n\nAll players will now pay the table and the game will begin!!!\n\n")
     game_players = []
     for p in players:
         if token.balanceOf(p.address) >= 10:
             token.transfer(table, 10, {"from": p.address})
             game_players.append(p)
+    os.system("cls")
     return game_players
 
 
 # For every playing player extract a value from its dice and create a sorted score board with extraction values and related player object
-def create_Game_Rank(game_players,contract):
+def create_Game_Rank(game_players, contract):
+    """
+
+    Function that creates a game rank based on the points obtained by the players during the current game
+
+    """
     scores = []
     for p in game_players:
-        p_score = [p.extraction(contract), p]
-        scores.append(p_score)
-        print(f"\nPlayer {p.id} game_score is: {p.game_score}")
+        p_score = p.extraction(contract)
+        print(f"\nPlayer {p.id} score is: {p_score}")
+        if p.multiplier != 1:
+            print(f"With your NFT multiplier your score went up to: {p.game_score}\n")
+        scores.append([p.game_score, p])
     scores.sort(key=operator.itemgetter(0), reverse=True)
     return scores
 
 
 # Pay winners, update player points and create the winner list to be merged into the Chain ranking
 def pay_Winners(scores, token):
+    """
+
+    Function that awards the winners of the current game
+
+    """
     print("\n\nThe table will now pay the winners. Congratulations !!\n\n")
 
     winner = scores[0][1]  # The winner gets 50 token
@@ -88,6 +115,12 @@ def pay_Winners(scores, token):
 
 
 def update_Chain_Ranking(winners, chain_rank, token):
+    """
+
+    Function that updates the blockchain ranking based on the points obtained during the current game
+
+    """
+    os.system("cls")
     print("\n\nUpdating game results to Global DCT Ranking....")
     start = time.time()
     # New ranking
@@ -105,7 +138,7 @@ def update_Chain_Ranking(winners, chain_rank, token):
     # Sort the updated chain_rank by points
     new_rank.sort(key=operator.itemgetter(1), reverse=True)
 
-    # Update the rank and put everithing into the final rank
+    # Update the rank field and put everithing into the final rank
     rank = 1
     final_rank = []
     for n_r in new_rank:
@@ -122,9 +155,14 @@ def update_Chain_Ranking(winners, chain_rank, token):
     print(f"\n\n...Update completed in {finish-start}s")
 
 
-def play(game_players, token, chain_rank,contract):
+def play(game_players, token, chain_rank, contract):
+    """
 
-    scores = create_Game_Rank(game_players,contract)
+    Function that handles all aspects of the game
+
+    """
+
+    scores = create_Game_Rank(game_players, contract)
 
     winners = pay_Winners(scores, token)
 
