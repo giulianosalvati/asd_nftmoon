@@ -1,31 +1,57 @@
-from brownie import accounts
+from brownie import accounts, Wei
 from scripts import Player, Utils
 import operator
 import time
-import os
+from web3 import Web3
 
 
 table = accounts[0]
+GAME_PRICE = 10
+WELCOME_BONUS = 100
 
-# Welcome bonus for first time users only
-def welcome_bonus(player, token, i):
+
+def buy_DCT(player, token, i):
     """
 
-    Function that gives the new Players a welcome bonus
+    Function that handles a player with no DCT to play. He can choose to buy DCT with ETH
 
     """
-    if token.balanceOf(player.address) == 0:
-        print(
-            f"\nWelcome {player.address}. You get a welcome Bonus of 100 DCT. You can start playing the game. Your ID for the current game is {i+1}\n"
+    print(
+        f"\nWelcome back {player.address}. You have no DCT left to play and the game is starting soon. You have the chance to buy some DCT for ETH"
+    )
+
+    valid = False
+    while not valid:
+        choice = input(
+            "\nDo you want to buy some DCT. The change is 1 ETH -> 100 DCT y/n "
         )
-        token.transfer(player.address, 100, {"from": table})
-    else:
-        print(
-            f"Added {player.address} as {player.id} overall points = {player.points}. You have {token.balanceOf(player.address)} DCT left\n"
-        )
+        if choice == "y":
+            amount = int(
+                input(
+                    f"\nYou have {player.address.balance()/10**18} ETH. How many do you want to spend? "
+                )
+            )
+            if amount <= player.address.balance():
+                player.address.transfer(table, amount * 10**18)
+                token.transfer(player.address, amount * 100, {"from": table})
+                print(
+                    f"\nYou now have {token.balanceOf(player.address)} DCT. You will play as Player {i + 1}"
+                )
+                valid = True
+            else:
+                print(
+                    "\nYou have insufficient balance!! Recharge and be ready for next game"
+                )
+                valid = True
+        elif choice == "n":
+            print(
+                "\nYou will miss this game!! Recharge and be ready for next game so you don't miss it"
+            )
+            valid = True
+        else:
+            print("\nYou have to choose between y (for yes) and n (for no)")
 
 
-# Creates the player list for the game. If the player is new he recives a welcome bonus and gets added to the blockchain
 def game_Set_Up(token, chain_rank, n_players):
     """
 
@@ -33,21 +59,36 @@ def game_Set_Up(token, chain_rank, n_players):
 
     """
     players = []
+    new_players = []
     for i in range(n_players):
+
         address = accounts[i + 1]
         points = token.getUserPoints(address)
-        players.append(Player.Player(address, i + 1, points))
+        player = Player.Player(address, i + 1, points)
+
         # If the player never logged in he can receive the welcome bonus
-        if not Utils.check_If_Player_In_Blockcahin_Rank(address, chain_rank):
-            welcome_bonus(players[i], token, i)
+        if (
+            not Utils.check_If_Player_In_Blockcahin_Rank(address, chain_rank)
+            and token.balanceOf(player.address) == 0
+        ):
+            print(
+                f"\nWelcome {player.address}. You get a welcome Bonus of 100 DCT. You can start playing the game. Your ID for the current game is {i+1}\n"
+            )
+            new_players.append(player.address)
+            players.append(player)
+        elif token.balanceOf(player.address) == 0:
+            buy_DCT(player, token, i)
+            players.append(player)
         else:
             print(
-                f"Added {address} as {players[i].id} overall points = {points}. You have {token.balanceOf(address)} DCT left\n"
+                f"\nAdded {player.address} as Player {player.id} overall points = {player.points}. You have {token.balanceOf(player.address)} DCT left\n"
             )
+            players.append(player)
+    if len(new_players) > 0:
+        token.welcomeBonus(new_players, WELCOME_BONUS, {"from": table})
     return players
 
 
-# Check if players have enough DCT tokens to play and pay table. If not discard them
 def pay_table(players, token):
     """
 
@@ -56,15 +97,15 @@ def pay_table(players, token):
     """
     print("\n\nAll players will now pay the table and the game will begin!!!\n\n")
     game_players = []
+    addresses = []
     for p in players:
-        if token.balanceOf(p.address) >= 10:
-            token.transfer(table, 10, {"from": p.address})
+        if token.balanceOf(p.address) >= GAME_PRICE:
+            token.transfer(table, GAME_PRICE, {"from": p.address})
             game_players.append(p)
-    os.system("cls")
+            addresses.append(p.address)
     return game_players
 
 
-# For every playing player extract a value from its dice and create a sorted score board with extraction values and related player object
 def create_Game_Rank(game_players, contract):
     """
 
@@ -82,7 +123,6 @@ def create_Game_Rank(game_players, contract):
     return scores
 
 
-# Pay winners, update player points and create the winner list to be merged into the Chain ranking
 def pay_Winners(scores, token):
     """
 
@@ -120,7 +160,6 @@ def update_Chain_Ranking(winners, chain_rank, token):
     Function that updates the blockchain ranking based on the points obtained during the current game
 
     """
-    os.system("cls")
     print("\n\nUpdating game results to Global DCT Ranking....")
     start = time.time()
     # New ranking

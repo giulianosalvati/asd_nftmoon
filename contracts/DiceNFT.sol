@@ -12,21 +12,20 @@ contract DiceNFT is ERC721URIStorage, Ownable {
         COUNTER = 0;
     }
 
-    //Struttura per la carta. da rivedere?!?!
+    //DiceNFT structure
     struct Dice {
         string name;
         uint256 id;
         string uri;
     }
 
-    //array dove vengono salvati gli nft creati
+    //Array where all the NFTs will be stored
     Dice[] public Dices;
-    mapping(address => Dice[]) public dices;
 
-    //Mi serve gestire l'evento che la funzione emit del mint lancia(come transazione)
+    //The event to emit when a new Dice NFT is created
     event NewDice(address indexed owner, uint256 id, string uri);
 
-    //Creation of the NFT
+    //Mint a new NFT
     function createDice(string memory _name, string calldata _uri)
         public
         returns (uint256)
@@ -40,12 +39,12 @@ contract DiceNFT is ERC721URIStorage, Ownable {
         return COUNTER - 1;
     }
 
-    //Per riuscire a prendere la lista di Nft
+    //Retrieve all Dices
     function getDices() public view returns (Dice[] memory) {
         return Dices;
     }
 
-    //Per prendere solo gli nft dell'owner
+    //Retrieve all the _user NFTs
     function getOwnerDices(address _user) public view returns (Dice[] memory) {
         Dice[] memory result = new Dice[](balanceOf(_user));
         uint256 counter = 0;
