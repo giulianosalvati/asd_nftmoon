@@ -13,10 +13,11 @@
 # How to get started:
  ## Before the execution
    1. Setting Ganache Local Blockchain
+   
       :pushpin: Remember to leave Ganache open while code running.
    2. Setting Brownie with Ganache
 
  ## To execute the game
-  ''' bash
-  brownie run main.py
-  '''
+
+  > brownie run main.py
+ 
