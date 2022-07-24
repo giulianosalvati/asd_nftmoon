@@ -138,7 +138,7 @@ def pay_Winners(scores, token):
     # Pay winners
     token.transfer(winner.address, 50, {"from": table})
     token.transfer(second.address, 30, {"from": table})
-    token.transfer(third.address, 30, {"from": table})
+    token.transfer(third.address, 20, {"from": table})
 
     # Update players points
     winner.points = winner.points + 50
