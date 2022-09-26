@@ -1,4 +1,4 @@
-# Dices Game :game_die: - Project B
+# Dice Game :game_die: - Project B
 "Architetture dei Sistemi Distribuiti" course project  @ UniCampus Rome - Developed by Marco Salmè, Daniele Mercuri, Giuliano Salvati e Massimo Capurro LlAdo'.
 
 # Exam Task :page_facing_up:
